@@ -1,5 +1,7 @@
 package com.fehead.open.user.dao;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -13,6 +15,13 @@ import lombok.Data;
 @Data
 public class AvatarSizeDO {
 
+    @TableId
+    private String id;
 
+    @TableField("avatar_64")
+    private String avatar64;
+
+    @TableField("avatar_32")
+    private String avatar32;
 
 }

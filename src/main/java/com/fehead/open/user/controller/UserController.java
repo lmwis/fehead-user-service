@@ -10,10 +10,7 @@ import com.fehead.open.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Description:
@@ -33,6 +30,13 @@ public class UserController extends BaseController {
     private final UserService userService;
 
 
+    /**
+     * 添加用户
+     *  添加成功返回 登陆成功的用户授权信息与基本信息获取认证
+     * @param userVO
+     * @return
+     * @throws BusinessException
+     */
     @PostMapping("")
     public FeheadResponse addUser(@RequestBody UserVO userVO) throws BusinessException {
 
@@ -55,9 +59,18 @@ public class UserController extends BaseController {
 
         }
 
-        // 返回登陆成功状态
+        // 返回登陆成功授权和用户基本信息
         return CommonReturnType.create("");
+    }
 
+    @GetMapping("/authentication")
+    public FeheadResponse test1(){
+        return CommonReturnType.create('1');
+    }
+
+    @GetMapping("/test2")
+    public FeheadResponse test2(){
+        return CommonReturnType.create('2');
     }
 
 }

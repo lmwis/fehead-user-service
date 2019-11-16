@@ -1,5 +1,6 @@
 package com.fehead.open.user.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fehead.lang.controller.BaseController;
 import com.fehead.lang.error.AuthenticationException;
 import com.fehead.lang.error.BusinessException;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 
 /**
  * @Description:
@@ -52,7 +54,7 @@ public class UserController extends BaseController {
     @Transactional(rollbackFor=Exception.class) // 所有异常均回滚
     @PostMapping("")
     @ApiOperation("用户注册接口")
-    public CommonReturnType addUser(@ApiParam("user注册视图") @RequestBody UserVO userVO) throws BusinessException {
+    public CommonReturnType addUser(@ApiParam("user注册视图") @RequestBody UserVO userVO) throws BusinessException, IOException {
 
         if (this.validateNull(userVO)
                 &&

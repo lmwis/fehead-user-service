@@ -1,22 +1,30 @@
 package com.fehead.open.user.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fehead.lang.componment.StringIdGenerator;
 import com.fehead.lang.error.AuthenticationException;
 import com.fehead.lang.error.BusinessException;
 import com.fehead.lang.error.EmBusinessError;
+import com.fehead.lang.response.CommonReturnType;
+import com.fehead.lang.response.FeheadResponse;
 import com.fehead.open.user.controller.vo.UserVO;
 import com.fehead.open.user.dao.*;
 import com.fehead.open.user.dao.mapper.*;
 import com.fehead.open.user.domain.UserInfoDetailModel;
+import com.fehead.open.user.response.RPCommonErrorType;
 import com.fehead.open.user.security.authentication.AuthenticationSuccessHandler;
 import com.fehead.open.user.security.authentication.UserAccessAuthenticationToken;
 import com.fehead.open.user.service.UserService;
+import com.fehead.open.user.service.remote.FeheadCommonService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -28,6 +36,8 @@ import java.util.Date;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private static final String REGISTER_MODE_TEL = "ByTel";
 
@@ -47,11 +57,15 @@ public class UserServiceImpl implements UserService {
 
     private final StringIdGenerator stringIdGenerator;
 
+    private final FeheadCommonService feheadCommonService;
+
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
+
+    private final ObjectMapper objectMapper;
 
 
     @Override
-    public void registerUser(UserVO userVO) throws BusinessException {
+    public void registerUser(UserVO userVO) throws BusinessException, IOException {
 
         String authenticateCode = userVO.getAuthenticateCode();
         boolean flag = false; // 校验结果
@@ -59,6 +73,15 @@ public class UserServiceImpl implements UserService {
             // 调用服务进行校验
         } else if (StringUtils.equalsIgnoreCase(userVO.getMode(), REGISTER_MODE_TEL)) { // 手机校验
             // 调用服务进行校验
+            CommonReturnType commonReturnType = feheadCommonService.validateSms(userVO.getTel(), authenticateCode);
+
+            if(StringUtils.equals(commonReturnType.getData().toString(),userVO.getTel())){ // 表示校验成功
+
+            }else{
+                String s = objectMapper.writeValueAsString(commonReturnType);
+                RPCommonErrorType rpCommonErrorType = objectMapper.readValue(s, RPCommonErrorType.class);
+                throw new BusinessException(EmBusinessError.UNKNOWN_ERROR,rpCommonErrorType.getData().getErrorMsg());
+            }
 
             flag = true;
         } else {
@@ -72,7 +95,7 @@ public class UserServiceImpl implements UserService {
 
         // 不能重复注册
         UserInfoCoreDO existUserInfo = userInfoCoreMapper.selectByUsername(userVO.getUsername());
-        if(existUserInfo!=null){
+        if (existUserInfo != null) {
             throw new BusinessException(EmBusinessError.USER_ALREAY_EXIST);
         }
 
@@ -111,8 +134,8 @@ public class UserServiceImpl implements UserService {
         userInfoDetailDO.setId(stringIdGenerator.generatorId());
         userInfoDetailDO.setUserAreaId(areaDO.getId());
         userInfoDetailDO.setUserAvatarId(avatarSizeDO.getId());
+        userInfoDetailDO.setUserGender(0);
         userInfoDetailMapper.insert(userInfoDetailDO);
-
 
 
     }
@@ -122,12 +145,12 @@ public class UserServiceImpl implements UserService {
 
         UserInfoCoreDO userInfoCoreDO = userInfoCoreMapper.selectByUsername(username);
 
-        if(userInfoCoreDO==null){
+        if (userInfoCoreDO == null) {
             throw new AuthenticationException(EmBusinessError.USER_NOT_EXIST);
         }
 
         // return user detail
-        return new UserAccessAuthenticationToken(userInfoCoreDO.getUsername(),userInfoCoreDO.getPasswordDO().getPasswordEncode());
+        return new UserAccessAuthenticationToken(userInfoCoreDO.getUsername(), userInfoCoreDO.getPasswordDO().getPasswordEncode());
     }
 
     @Override
@@ -135,15 +158,15 @@ public class UserServiceImpl implements UserService {
 
         UserInfoDetailDO userInfoDetailDO = userInfoDetailMapper.selectByUsername(name);
 
-        if(userInfoDetailDO==null){
+        if (userInfoDetailDO == null) {
             throw new BusinessException(EmBusinessError.USER_NOT_EXIST);
         }
 
         return convertFromUserInfoDetailDO(userInfoDetailDO);
     }
 
-    private UserInfoDetailModel convertFromUserInfoDetailDO(UserInfoDetailDO userInfoDetailDO){
-        if (userInfoDetailDO==null){
+    private UserInfoDetailModel convertFromUserInfoDetailDO(UserInfoDetailDO userInfoDetailDO) {
+        if (userInfoDetailDO == null) {
             return null;
         }
 

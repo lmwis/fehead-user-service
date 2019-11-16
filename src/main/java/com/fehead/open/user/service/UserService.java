@@ -1,5 +1,6 @@
 package com.fehead.open.user.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fehead.lang.error.AuthenticationException;
 import com.fehead.lang.error.BusinessException;
 import com.fehead.open.user.controller.vo.UserAuthentication;
@@ -7,6 +8,8 @@ import com.fehead.open.user.controller.vo.UserVO;
 import com.fehead.open.user.dao.UserInfoDetailDO;
 import com.fehead.open.user.domain.UserInfoDetailModel;
 import com.fehead.open.user.security.authentication.UserAccessAuthenticationToken;
+
+import java.io.IOException;
 
 /**
  * @Description:
@@ -16,7 +19,7 @@ import com.fehead.open.user.security.authentication.UserAccessAuthenticationToke
  */
 public interface UserService {
 
-    void registerUser(UserVO userVO) throws BusinessException;
+    void registerUser(UserVO userVO) throws BusinessException, IOException;
 
     UserAccessAuthenticationToken loadUser(String username) throws AuthenticationException;
 

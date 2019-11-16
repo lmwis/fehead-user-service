@@ -26,3 +26,18 @@ spring:
 #    url:
 #    name:
 #    type:
+ribbon:
+  ReadTimeout: 6000000
+  ConnectTimeout: 6000000
+feign:
+  hystrix:
+    #    execution:
+    #      isolation:
+    #        thread:
+    #          timeoutInMilliseconds: 3000
+    enabled: true
+  client:
+    config:
+      defualt:
+        connectTimeout: 20000
+        readTimeout: 200000

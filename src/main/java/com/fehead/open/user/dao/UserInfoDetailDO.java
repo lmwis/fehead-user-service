@@ -24,10 +24,10 @@ public class UserInfoDetailDO {
     @TableField("username")
     private String username;
 
-    @TableField("gender")
+    @TableField("user_gender")
     private int userGender;
 
-    @TableField("birthday")
+    @TableField("user_birthday")
     private Date userBirthday;
 
     @TableField("user_avatar_id")

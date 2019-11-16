@@ -1,6 +1,10 @@
 package com.fehead.open.user.service;
 
+import com.fehead.lang.error.AuthenticationException;
+import com.fehead.lang.error.BusinessException;
+import com.fehead.open.user.controller.vo.UserAuthentication;
 import com.fehead.open.user.controller.vo.UserVO;
+import com.fehead.open.user.security.authentication.UserAccessAuthenticationToken;
 
 /**
  * @Description:
@@ -10,9 +14,7 @@ import com.fehead.open.user.controller.vo.UserVO;
  */
 public interface UserService {
 
+    void registerUser(UserVO userVO) throws BusinessException;
 
-    void registerUserByEmail(UserVO userVO);
-
-    void registerUser(UserVO userVO);
-
+    UserAccessAuthenticationToken loadUser(String username) throws AuthenticationException;
 }

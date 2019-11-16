@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * @Description:
+ * @Description: JWT认证过滤器
  * @Author lmwis
  * @Date 2019-11-15 20:36
  * @Version 1.0
@@ -28,17 +28,32 @@ import java.util.*;
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
-    private final AuthenticationFailureHandler authenticationFailureHandler;
-    private final FeheadSecurityContext feheadSecurityContext;
-
     private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
 
-    private static final String SINGE_KEY="fehead";
+    /**
+     * 认证失败处理器
+     */
+    private final AuthenticationFailureHandler authenticationFailureHandler;
+    /**
+     * 全局认证容器
+     */
+    private final FeheadSecurityContext feheadSecurityContext;
 
-    private static final String authorizationHeader = "Authorization";
+    /**
+     * 解析签名
+     */
+    public static final String SINGE_KEY = "fehead";
 
-    private static final Map<String, List<HttpMethod>> authenticatedUriList = new HashMap<String, List<HttpMethod>>(){{
-        put("/user", Arrays.asList(HttpMethod.GET,HttpMethod.DELETE,HttpMethod.PUT));
+    /**
+     * token请求头
+     */
+    public static final String authorizationHeader = "Authorization";
+
+    /**
+     * uri require认证列表
+     */
+    private static final Map<String, List<HttpMethod>> authenticatedUriList = new HashMap<String, List<HttpMethod>>() {{
+        put("/user", Arrays.asList(HttpMethod.GET, HttpMethod.DELETE, HttpMethod.PUT));
     }};
 
     @Override
@@ -47,14 +62,14 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         logger.info(requestURI);
-        if (isUriRequiredAuthenticated(request,request.getRequestURI())){ // 如果需要认证
+        if (isUriRequiredAuthenticated(request, request.getRequestURI())) { // 如果需要认证
             String header = request.getHeader(authorizationHeader); // 获取认证信息
             if (header == null || !header.startsWith("Bearer ")) { // 无请求头或者不以"Bearer "开头认为无效
                 // 认证不通过处理
                 authenticationFailureHandler
                         .onAuthenticationFailure(request
-                                ,response
-                                ,new AuthenticationException(EmBusinessError.SERVICE_AUTHENTICATION_ILLEGAL));
+                                , response
+                                , new AuthenticationException(EmBusinessError.SERVICE_AUTHENTICATION_ILLEGAL));
                 return;
             }
             // 有效token
@@ -63,21 +78,25 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             feheadSecurityContext.setAuthentication(authentication);
         }
 
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
 
     }
 
     /**
      * 判断uri是否需要认证
+     *
      * @param request
      * @param uri
      * @return
      */
-    private boolean isUriRequiredAuthenticated(HttpServletRequest request,String uri){
+    private boolean isUriRequiredAuthenticated(HttpServletRequest request, String uri) {
 
-        for (HttpMethod httpMethod : authenticatedUriList.get(uri)) {
-            if(HttpMethod.resolve(request.getMethod())==httpMethod){ // 匹配则需要认证
-                return true;
+
+        if(authenticatedUriList.keySet().equals(uri)){ // 先判断uri是否存在，再核对http method
+            for (HttpMethod httpMethod : authenticatedUriList.get(uri)) {
+                if (HttpMethod.resolve(request.getMethod()) == httpMethod) { // 匹配则需要认证
+                    return true;
+                }
             }
         }
 
@@ -86,6 +105,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     /**
      * 从token中解析用户认证信息
+     *
      * @param request
      * @return
      */
@@ -100,7 +120,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                     .getSubject();
 
             if (user != null) {
-                return new UserAccessAuthenticationToken(user);
+                return new UserAccessAuthenticationToken(user,"");
             }
             return null;
         }

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
@@ -23,6 +24,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication(scanBasePackages={"com.fehead.lang","com.fehead.open.user"})
 @MapperScan({"com.fehead.open.user.dao"})
 @Configuration
+@EnableTransactionManagement // 启用事务
 @EnableSwagger2
 @EnableEurekaClient
 public class UserServiceApplication {

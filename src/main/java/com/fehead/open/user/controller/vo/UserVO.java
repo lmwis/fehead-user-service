@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 /**
  * @Description:
  * @Author lmwis
@@ -18,6 +21,7 @@ public class UserVO {
     /**
      * username {Require}
      */
+    @NotBlank(message = "username不能为空")
     private String username;
 
     /**
@@ -38,12 +42,14 @@ public class UserVO {
     /**
      * 手机号或者邮箱的校验码
      */
+    @NotBlank(message = "校验码不能为空")
     private String authenticateCode;
 
     /**
      * 注册模式：
-     *  byTel
-     *  byEmail
+     * byTel
+     * byEmail
      */
+    @NotBlank(message = "注册方式不能为空")
     private String mode;
 }

@@ -3,6 +3,7 @@ package com.fehead.open.user.security.authentication;
 import com.fehead.lang.response.FeheadResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -11,11 +12,32 @@ import lombok.NoArgsConstructor;
  * @Date 2019-11-15 20:08
  * @Version 1.0
  */
-@AllArgsConstructor
-@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Data
 public class UserAccessAuthenticationToken extends FeheadResponse implements Authentication{
 
-    public UserAccessAuthenticationToken(String name) {
+    /**
+     * 创建未校验的token
+     * @param name
+     * @param credentials
+     */
+    public UserAccessAuthenticationToken(String name,String credentials) {
+        super();
+        this.credentials = credentials;
+        this.name = name;
+        this.setAuthenticated(false);
+    }
+
+    /**
+     * 创建校验成功的token
+     * @param name
+     * @param credentials
+     */
+    public UserAccessAuthenticationToken(AuthenticationDetails details, boolean authenticated, AuthenticationPrincipal principal, String credentials, String name) {
+        this.details = details;
+        this.authenticated = authenticated;
+        this.principal = principal;
+        this.credentials = credentials;
         this.name = name;
     }
 
@@ -32,6 +54,7 @@ public class UserAccessAuthenticationToken extends FeheadResponse implements Aut
 
     /**
      * username 认证用户名，可以是username,tel,email
+     * password 密码 加密后的
      * enabled 是否可用
      * credentialsNonExpired 凭证是否过期
      */
@@ -88,6 +111,8 @@ class AuthenticationDetails{
 class AuthenticationPrincipal{
 
     private String username;
+
+    private String password;
 
     private boolean enabled;
 

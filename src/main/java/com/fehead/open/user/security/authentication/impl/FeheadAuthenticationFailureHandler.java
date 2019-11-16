@@ -34,11 +34,11 @@ public class FeheadAuthenticationFailureHandler implements AuthenticationFailure
 
         logger.info("校验失败");
 
-        response.setStatus(HttpStatus.OK.value());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(objectMapper
                 .writeValueAsString( AuthenticationReturnType
-                        .create(exception.getMessage()
-                                ,HttpStatus.OK.value())));
+                        .create(exception.getErrorMsg()
+                                ,HttpStatus.UNAUTHORIZED.value())));
     }
 }

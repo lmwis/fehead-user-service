@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 /**
  * @Description:
  * @Author lmwis
@@ -34,12 +37,15 @@ public class UserInfoCoreDO {
     private String nickName;
 
     @TableField("create_time")
-    private long createTime;
+    private Date createTime;
 
     @TableField("update_time")
-    private long updateTime;
+    private Date updateTime;
 
     @TableField("register_mode")
     private String registerMode;
+
+    @TableField(exist = false)
+    private PasswordDO passwordDO;
 
 }

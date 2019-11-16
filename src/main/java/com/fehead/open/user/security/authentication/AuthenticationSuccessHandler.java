@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @Description:
+ * @Description: 认证成功处理器接口
  * @Author lmwis
  * @Date 2019-11-15 21:21
  * @Version 1.0

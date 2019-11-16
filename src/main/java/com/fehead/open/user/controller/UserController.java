@@ -1,16 +1,27 @@
 package com.fehead.open.user.controller;
 
 import com.fehead.lang.controller.BaseController;
+import com.fehead.lang.error.AuthenticationException;
 import com.fehead.lang.error.BusinessException;
 import com.fehead.lang.error.EmBusinessError;
 import com.fehead.lang.response.CommonReturnType;
 import com.fehead.lang.response.FeheadResponse;
 import com.fehead.open.user.controller.vo.UserVO;
+import com.fehead.open.user.dao.UserInfoDetailDO;
+import com.fehead.open.user.domain.UserInfoDetailModel;
+import com.fehead.open.user.security.FeheadSecurityContext;
+import com.fehead.open.user.security.authentication.Authentication;
 import com.fehead.open.user.service.UserService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 /**
@@ -24,13 +35,15 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class UserController extends BaseController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
+
+    private final FeheadSecurityContext feheadSecurityContext;
 
 
     /**
      * 添加用户
-     * 添加成功返回 登陆成功的用户授权信息与基本信息获取认证
      *
      * @param userVO
      * @return
@@ -38,8 +51,8 @@ public class UserController extends BaseController {
      */
     @Transactional(rollbackFor=Exception.class) // 所有异常均回滚
     @PostMapping("")
-    public FeheadResponse addUser(@Valid @RequestBody UserVO userVO) throws BusinessException {
-
+    @ApiOperation("用户注册接口")
+    public CommonReturnType addUser(@ApiParam("user注册视图") @RequestBody UserVO userVO) throws BusinessException {
 
         if (this.validateNull(userVO)
                 &&
@@ -54,8 +67,28 @@ public class UserController extends BaseController {
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }
 
-        // 返回登陆成功授权和用户基本信息
-        return CommonReturnType.create("注册成功");
+        // 返回注册成功
+        return CommonReturnType.create("添加成功");
+    }
+
+    /**
+     * 获取用户基本信息
+     * @return
+     * @throws AuthenticationException
+     * @throws BusinessException
+     */
+    @GetMapping("")
+    public FeheadResponse getUserInfoBasic() throws AuthenticationException, BusinessException {
+
+        Authentication authentication = feheadSecurityContext.getAuthentication();
+
+        if(authentication==null){ // 未授权用户
+            throw new AuthenticationException(EmBusinessError.SERVICE_AUTHENTICATION_INVALID);
+        }
+
+        UserInfoDetailModel userInfoDetailModel = userService.getUserDetailInfo(authentication.getName());
+
+        return CommonReturnType.create(userInfoDetailModel);
     }
 
 //    @GetMapping("/authentication")

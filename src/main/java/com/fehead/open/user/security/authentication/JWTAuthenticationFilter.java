@@ -4,6 +4,7 @@ import com.fehead.lang.error.AuthenticationException;
 import com.fehead.lang.error.EmBusinessError;
 import com.fehead.open.user.security.FeheadSecurityContext;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,8 +73,14 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                                 , new AuthenticationException(EmBusinessError.SERVICE_AUTHENTICATION_ILLEGAL));
                 return;
             }
-            // 有效token
+            // 解析token
             UserAccessAuthenticationToken authentication = getAuthentication(request);
+            if(authentication==null){ // 无效token
+                authenticationFailureHandler
+                        .onAuthenticationFailure(request
+                                , response
+                                , new AuthenticationException(EmBusinessError.SERVICE_AUTHENTICATION_INVALID));
+            }
             // 校验成功放入容器
             feheadSecurityContext.setAuthentication(authentication);
         }
@@ -92,7 +99,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private boolean isUriRequiredAuthenticated(HttpServletRequest request, String uri) {
 
 
-        if(authenticatedUriList.keySet().equals(uri)){ // 先判断uri是否存在，再核对http method
+        if(authenticatedUriList.keySet().contains(uri)){ // 先判断uri是否存在，再核对http method
             for (HttpMethod httpMethod : authenticatedUriList.get(uri)) {
                 if (HttpMethod.resolve(request.getMethod()) == httpMethod) { // 匹配则需要认证
                     return true;
@@ -112,16 +119,21 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private UserAccessAuthenticationToken getAuthentication(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         if (token != null) {
-            // parse the token.
-            String user = Jwts.parser()
-                    .setSigningKey(SINGE_KEY)
-                    .parseClaimsJws(token.replace("Bearer ", ""))
-                    .getBody()
-                    .getSubject();
+            try {
+                // parse the token.
+                String user = Jwts.parser()
+                        .setSigningKey(SINGE_KEY)
+                        .parseClaimsJws(token.replace("Bearer ", ""))
+                        .getBody()
+                        .getSubject();
 
-            if (user != null) {
-                return new UserAccessAuthenticationToken(user,"");
+                if (user != null) {
+                    return new UserAccessAuthenticationToken(user,"");
+                }
+            } catch (SignatureException e){ // jwt无效
+                return null;
             }
+
             return null;
         }
         return null;

@@ -4,6 +4,8 @@ import com.fehead.lang.error.AuthenticationException;
 import com.fehead.lang.error.BusinessException;
 import com.fehead.open.user.controller.vo.UserAuthentication;
 import com.fehead.open.user.controller.vo.UserVO;
+import com.fehead.open.user.dao.UserInfoDetailDO;
+import com.fehead.open.user.domain.UserInfoDetailModel;
 import com.fehead.open.user.security.authentication.UserAccessAuthenticationToken;
 
 /**
@@ -17,4 +19,6 @@ public interface UserService {
     void registerUser(UserVO userVO) throws BusinessException;
 
     UserAccessAuthenticationToken loadUser(String username) throws AuthenticationException;
+
+    UserInfoDetailModel getUserDetailInfo(String name) throws BusinessException;
 }

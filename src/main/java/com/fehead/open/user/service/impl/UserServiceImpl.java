@@ -17,6 +17,7 @@ import com.fehead.open.user.security.authentication.AuthenticationSuccessHandler
 import com.fehead.open.user.security.authentication.UserAccessAuthenticationToken;
 import com.fehead.open.user.service.UserService;
 import com.fehead.open.user.service.remote.FeheadCommonService;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -73,17 +74,23 @@ public class UserServiceImpl implements UserService {
             // 调用服务进行校验
         } else if (StringUtils.equalsIgnoreCase(userVO.getMode(), REGISTER_MODE_TEL)) { // 手机校验
             // 调用服务进行校验
-            CommonReturnType commonReturnType = feheadCommonService.validateSms(userVO.getTel(), authenticateCode);
+            CommonReturnType commonReturnType = null;
+            try {
+                commonReturnType = feheadCommonService.validateSms(userVO.getTel(), authenticateCode);
+            } catch (HystrixRuntimeException e) {
 
-            if(StringUtils.equals(commonReturnType.getData().toString(),userVO.getTel())){ // 表示校验成功
-
-            }else{
-                String s = objectMapper.writeValueAsString(commonReturnType);
-                RPCommonErrorType rpCommonErrorType = objectMapper.readValue(s, RPCommonErrorType.class);
-                throw new BusinessException(EmBusinessError.UNKNOWN_ERROR,rpCommonErrorType.getData().getErrorMsg());
+                // 异常类型转换
+                throw new BusinessException(EmBusinessError.RPC_FAIL, EmBusinessError.RPC_FAIL.getErrorMsg() + "<" + e.getMessage() + ">");
             }
 
-            flag = true;
+            if (StringUtils.equals(commonReturnType.getData().toString(), userVO.getTel())) { // 表示校验成功
+                flag = true;
+            } else {
+                // 序列化为错误的返回类型
+                String s = objectMapper.writeValueAsString(commonReturnType);
+                RPCommonErrorType rpCommonErrorType = objectMapper.readValue(s, RPCommonErrorType.class);
+                throw new BusinessException(EmBusinessError.valueOfByCode(rpCommonErrorType.getData().getErrorCode()));
+            }
         } else {
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR, "注册方式不合法");
         }

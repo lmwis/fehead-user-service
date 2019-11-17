@@ -1,5 +1,6 @@
 package com.fehead.open.user.response;
 
+import com.fehead.lang.response.ErrorMsgType;
 import lombok.Data;
 
 /**
@@ -11,7 +12,7 @@ import lombok.Data;
 @Data
 public class RPCommonErrorType {
 
-    private ErrorMsg data;
+    private ErrorMsgType data;
 
     private String status;
 

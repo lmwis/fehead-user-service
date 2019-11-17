@@ -46,7 +46,7 @@ public class UserController extends BaseController {
 
     /**
      * 添加用户
-     *
+     *  done.
      * @param userVO
      * @return
      * @throws BusinessException
@@ -75,6 +75,7 @@ public class UserController extends BaseController {
 
     /**
      * 获取用户基本信息
+     *  done.
      * @return
      * @throws AuthenticationException
      * @throws BusinessException

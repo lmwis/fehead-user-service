@@ -26,6 +26,11 @@ spring:
 #    url:
 #    name:
 #    type:
+fehead:
+  user-service:
+    authenticate:
+      principalParameter: password
+
 ribbon:
   ReadTimeout: 6000000
   ConnectTimeout: 6000000

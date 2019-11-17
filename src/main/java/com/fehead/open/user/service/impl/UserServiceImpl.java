@@ -162,6 +162,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInfoDetailModel getUserDetailInfo(String name) throws BusinessException {
+        if(StringUtils.isEmpty(name)){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
 
         UserInfoDetailDO userInfoDetailDO = userInfoDetailMapper.selectByUsername(name);
 

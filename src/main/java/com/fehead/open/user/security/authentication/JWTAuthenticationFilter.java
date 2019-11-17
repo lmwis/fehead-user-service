@@ -21,6 +21,7 @@ import java.util.*;
 
 /**
  * @Description: JWT认证过滤器
+ *  done.
  * @Author lmwis
  * @Date 2019-11-15 20:36
  * @Version 1.0
@@ -52,6 +53,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     /**
      * uri require认证列表
+     * 此处之后需要移入配置文件
      */
     private static final Map<String, List<HttpMethod>> authenticatedUriList = new HashMap<String, List<HttpMethod>>() {{
         put("/user", Arrays.asList(HttpMethod.GET, HttpMethod.DELETE, HttpMethod.PUT));

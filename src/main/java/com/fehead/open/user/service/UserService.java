@@ -7,6 +7,7 @@ import com.fehead.open.user.controller.vo.UserAuthentication;
 import com.fehead.open.user.controller.vo.UserVO;
 import com.fehead.open.user.dao.UserInfoDetailDO;
 import com.fehead.open.user.domain.UserInfoDetailModel;
+import com.fehead.open.user.security.authentication.Authentication;
 import com.fehead.open.user.security.authentication.UserAccessAuthenticationToken;
 
 import java.io.IOException;
@@ -23,5 +24,13 @@ public interface UserService {
 
     UserAccessAuthenticationToken loadUser(String username) throws AuthenticationException;
 
-    UserInfoDetailModel getUserDetailInfo(String name) throws BusinessException;
+    UserInfoDetailModel getUserDetailInfo(Authentication authentication) throws BusinessException;
+
+    void updatePasswordByTelCode(Authentication authentication,String code,String password) throws BusinessException, IOException;
+
+    void updateUserNickName(Authentication authentication, String nickName);
+
+    void updateUserGender(Authentication authentication, String genderCode);
+
+    void updateUserBirthday(Authentication authentication, String birthday);
 }

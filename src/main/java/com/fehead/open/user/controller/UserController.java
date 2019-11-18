@@ -83,15 +83,102 @@ public class UserController extends BaseController {
     @GetMapping("")
     public FeheadResponse getUserInfoBasic() throws AuthenticationException, BusinessException {
 
+        Authentication authentication = this.getAuthenticationUser();
+
+        UserInfoDetailModel userInfoDetailModel = userService.getUserDetailInfo(authentication);
+
+        return CommonReturnType.create(userInfoDetailModel);
+    }
+
+    /**
+     * 手机验证码修改密码
+     *  test.
+     * @param code
+     * @return
+     * @throws AuthenticationException
+     */
+    @PutMapping("/resetPassword")
+    @Transactional(rollbackFor=Exception.class) // 所有异常均回滚
+    public FeheadResponse updateUserInfoCore(@RequestParam("code")String code,@RequestParam String password) throws AuthenticationException, IOException, BusinessException {
+
+        Authentication authentication = this.getAuthenticationUser();
+
+        userService.updatePasswordByTelCode(authentication,code,password);
+
+        return CommonReturnType.create("修改成功");
+    }
+
+    /**
+     * 修改用户昵称
+     *  test.
+     * @param nickName
+     * @return
+     * @throws AuthenticationException
+     */
+    @PutMapping("/resetNickName")
+    @Transactional(rollbackFor=Exception.class) // 所有异常均回滚
+    public FeheadResponse updateUserNickname(@RequestParam("nick_name") String nickName) throws AuthenticationException {
+
+        Authentication authentication = this.getAuthenticationUser();
+
+        userService.updateUserNickName(authentication,nickName);
+
+        return CommonReturnType.create("修改成功");
+    }
+
+    /**
+     * 修改用户性别
+     *  test.
+     * @param genderCode
+     * @return
+     * @throws AuthenticationException
+     */
+    @PutMapping("/resetGender")
+    @Transactional(rollbackFor=Exception.class) // 所有异常均回滚
+    public FeheadResponse updateUserGender(@RequestParam("gender_code")@ApiParam("0(保密) 1(男) 2(女)") String genderCode) throws AuthenticationException, BusinessException {
+
+        Authentication authentication = this.getAuthenticationUser();
+
+        try{
+            int i  = new Integer(genderCode);
+            if(i!=0 && i !=1 && i!=2){ // 值满足
+                throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+            }
+        }catch (Exception e){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+
+        userService.updateUserGender(authentication,genderCode);
+
+        return CommonReturnType.create("修改成功");
+
+    }
+
+    /**
+     * 修改用户出生日期
+     *  text.
+     * @return
+     * @throws AuthenticationException
+     */
+    @PutMapping("/resetBirthday")
+    @Transactional(rollbackFor=Exception.class) // 所有异常均回滚
+    public FeheadResponse updateUserBirthday(@RequestParam("birthday")@ApiParam("时间戳") String birthday) throws AuthenticationException {
+
+        Authentication authentication = this.getAuthenticationUser();
+
+        userService.updateUserBirthday(authentication,birthday);
+
+        return CommonReturnType.create("修改成功");
+
+    }
+
+    private Authentication getAuthenticationUser() throws AuthenticationException {
         Authentication authentication = feheadSecurityContext.getAuthentication();
 
         if(authentication==null){ // 未授权用户
             throw new AuthenticationException(EmBusinessError.SERVICE_AUTHENTICATION_INVALID);
         }
-
-        UserInfoDetailModel userInfoDetailModel = userService.getUserDetailInfo(authentication.getName());
-
-        return CommonReturnType.create(userInfoDetailModel);
+        return authentication;
     }
 
 //    @GetMapping("/authentication")

@@ -13,6 +13,7 @@ import com.fehead.open.user.dao.*;
 import com.fehead.open.user.dao.mapper.*;
 import com.fehead.open.user.domain.UserInfoDetailModel;
 import com.fehead.open.user.response.RPCommonErrorType;
+import com.fehead.open.user.security.authentication.Authentication;
 import com.fehead.open.user.security.authentication.AuthenticationSuccessHandler;
 import com.fehead.open.user.security.authentication.UserAccessAuthenticationToken;
 import com.fehead.open.user.service.UserService;
@@ -161,7 +162,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoDetailModel getUserDetailInfo(String name) throws BusinessException {
+    public UserInfoDetailModel getUserDetailInfo(Authentication authentication) throws BusinessException {
+        String name = authentication.getName();
         if(StringUtils.isEmpty(name)){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }
@@ -173,6 +175,98 @@ public class UserServiceImpl implements UserService {
         }
 
         return convertFromUserInfoDetailDO(userInfoDetailDO);
+    }
+
+    @Override
+    public void updatePasswordByTelCode(Authentication authentication,String code,String password) throws BusinessException, IOException {
+        String name = authentication.getName();
+
+        UserInfoCoreDO userInfoCoreDO = userInfoCoreMapper.selectByUsername(name);
+
+        // 调用服务进行校验
+        boolean flag=false;
+        CommonReturnType commonReturnType = null;
+        try {
+            commonReturnType = feheadCommonService.validateSms(userInfoCoreDO.getUserTel(), code);
+        } catch (HystrixRuntimeException e) {
+
+            // 异常类型转换
+            throw new BusinessException(EmBusinessError.RPC_FAIL, EmBusinessError.RPC_FAIL.getErrorMsg() + "<" + e.getMessage() + ">");
+        }
+
+        if (StringUtils.equals(commonReturnType.getData().toString(), userInfoCoreDO.getUserTel())) { // 表示校验成功
+            flag = true;
+        } else {
+            // 序列化为错误的返回类型
+            String s = objectMapper.writeValueAsString(commonReturnType);
+            RPCommonErrorType rpCommonErrorType = objectMapper.readValue(s, RPCommonErrorType.class);
+            throw new BusinessException(EmBusinessError.valueOfByCode(rpCommonErrorType.getData().getErrorCode()));
+        }
+
+        if (!flag) { // 校验失败
+            throw new BusinessException(EmBusinessError.SMS_ILLEGAL, "用户认证信息无效");
+        }
+
+
+        // 用户更新
+        userInfoCoreDO.setUpdateTime(new Date());
+        userInfoCoreMapper.updateById(userInfoCoreDO);
+        // 修改密码
+        PasswordDO passwordDO = userInfoCoreDO.getPasswordDO();
+        passwordDO.setPasswordEncode(passwordEncoder.encode(password));
+        passwordInfoMapper.updateById(passwordDO);
+
+    }
+
+    /**
+     * 修改用户昵称
+     * @param authentication
+     * @param nickName
+     */
+    @Override
+    public void updateUserNickName(Authentication authentication, String nickName) {
+        String name = authentication.getName();
+        UserInfoCoreDO userInfoCoreDO = userInfoCoreMapper.selectByUsername(name);
+        userInfoCoreDO.setNickName(nickName);
+        userInfoCoreDO.setUpdateTime(new Date());
+
+        userInfoCoreMapper.updateById(userInfoCoreDO);
+    }
+
+    /**
+     * 修改用户性别
+     * @param authentication
+     * @param genderCode
+     */
+    @Override
+    public void updateUserGender(Authentication authentication, String genderCode) {
+        String name = authentication.getName();
+        UserInfoDetailDO userInfoDetailDO = userInfoDetailMapper.selectByUsername(name);
+        userInfoDetailDO.setUserGender(new Integer(genderCode));
+        UserInfoCoreDO userInfoCoreDO = userInfoDetailDO.getUserInfoCoreDO();
+        userInfoCoreDO.setUpdateTime(new Date());
+
+        userInfoCoreMapper.updateById(userInfoCoreDO);
+
+        userInfoDetailMapper.updateById(userInfoDetailDO);
+    }
+
+    /**
+     * 修改用户出生日期
+     * @param authentication
+     * @param birthday
+     */
+    @Override
+    public void updateUserBirthday(Authentication authentication, String birthday) {
+        String name = authentication.getName();
+        UserInfoDetailDO userInfoDetailDO = userInfoDetailMapper.selectByUsername(name);
+        userInfoDetailDO.setUserBirthday(new Date(new Long(birthday)));
+        UserInfoCoreDO userInfoCoreDO = userInfoDetailDO.getUserInfoCoreDO();
+        userInfoCoreDO.setUpdateTime(new Date());
+
+        userInfoCoreMapper.updateById(userInfoCoreDO);
+
+        userInfoDetailMapper.updateById(userInfoDetailDO);
     }
 
     private UserInfoDetailModel convertFromUserInfoDetailDO(UserInfoDetailDO userInfoDetailDO) {

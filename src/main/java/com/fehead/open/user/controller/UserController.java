@@ -80,7 +80,7 @@ public class UserController extends BaseController {
      * @throws AuthenticationException
      * @throws BusinessException
      */
-    @GetMapping("")
+    @GetMapping()
     public FeheadResponse getUserInfoBasic() throws AuthenticationException, BusinessException {
 
         Authentication authentication = this.getAuthenticationUser();

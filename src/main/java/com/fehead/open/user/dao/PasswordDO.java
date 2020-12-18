@@ -16,6 +16,9 @@ import lombok.Data;
 @TableName("password_info")
 public class PasswordDO {
 
+    /**
+     * int 自增id
+     */
     @TableId(type= IdType.AUTO)
     private long id;
 

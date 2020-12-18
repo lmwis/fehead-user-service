@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * @Description:
+ * @Description: 住址信息
  * @Author lmwis
  * @Date 2019-11-14 22:33
  * @Version 1.0
@@ -14,6 +14,9 @@ import lombok.Data;
 @Data
 public class AreaDO {
 
+    /**
+     * uuid
+     */
     @TableId
     private String id;
 

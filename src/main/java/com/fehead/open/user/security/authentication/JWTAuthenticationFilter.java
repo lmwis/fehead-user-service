@@ -21,7 +21,7 @@ import java.util.*;
 
 /**
  * @Description: JWT认证过滤器
- *  done.
+ * done.
  * @Author lmwis
  * @Date 2019-11-15 20:36
  * @Version 1.0
@@ -108,7 +108,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         }
-
         return false;
     }
 
@@ -119,7 +118,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
      * @return
      */
     private UserAccessAuthenticationToken getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader(authorizationHeader);
         if (token != null) {
             try {
                 // parse the token.
@@ -135,7 +134,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             } catch (SignatureException e){ // jwt无效
                 return null;
             }
-
             return null;
         }
         return null;

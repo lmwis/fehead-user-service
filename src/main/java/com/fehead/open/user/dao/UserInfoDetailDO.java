@@ -9,7 +9,7 @@ import lombok.ToString;
 import java.util.Date;
 
 /**
- * @Description:
+ * @Description: DB用户详细信息
  * @Author lmwis
  * @Date 2019-11-16 17:32
  * @Version 1.0
@@ -18,6 +18,9 @@ import java.util.Date;
 @Data
 public class UserInfoDetailDO {
 
+    /**
+     * uuid
+     */
     @TableId
     private String id;
 
@@ -30,9 +33,15 @@ public class UserInfoDetailDO {
     @TableField("user_birthday")
     private Date userBirthday;
 
+    /**
+     * uuid
+     */
     @TableField("user_avatar_id")
     private String userAvatarId;
 
+    /**
+     * uuid
+     */
     @TableField("user_area_id")
     private String userAreaId;
 

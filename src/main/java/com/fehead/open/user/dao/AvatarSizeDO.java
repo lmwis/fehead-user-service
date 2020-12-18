@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * @Description:
+ * @Description: 用户头像
  * @Author lmwis
  * @Date 2019-11-14 22:35
  * @Version 1.0
@@ -15,12 +15,20 @@ import lombok.Data;
 @Data
 public class AvatarSizeDO {
 
+    /**
+     * uuid
+     */
     @TableId
     private String id;
 
+    /**
+     * url
+     */
     @TableField("avatar_64")
     private String avatar64;
-
+    /**
+     * url
+     */
     @TableField("avatar_32")
     private String avatar32;
 

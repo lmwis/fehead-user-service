@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 /**
- * @Description:
+ * @Description: DB用户核心信息类
  * @Author lmwis
  * @Date 2019-11-14 21:04
  * @Version 1.0
@@ -18,6 +18,9 @@ import java.util.Date;
 @TableName("user_info_core")
 public class UserInfoCoreDO {
 
+    /**
+     * uuid
+     */
     @TableId
     private String id;
 
@@ -42,6 +45,9 @@ public class UserInfoCoreDO {
     @TableField("update_time")
     private Date updateTime;
 
+    /**
+     * 注册模式，byEmail | byTel
+     */
     @TableField("register_mode")
     private String registerMode;
 

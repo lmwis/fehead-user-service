@@ -41,9 +41,9 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    private static final String REGISTER_MODE_TEL = "ByTel";
+    public static final String REGISTER_MODE_TEL = "ByTel";
 
-    private static final String REGISTER_MODE_EMAIL = "ByEmail";
+    public static final String REGISTER_MODE_EMAIL = "ByEmail";
 
     private final PasswordEncoder passwordEncoder;
 
@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
         // 不能重复注册
         UserInfoCoreDO existUserInfo = userInfoCoreMapper.selectByUsername(userVO.getUsername());
         if (existUserInfo != null) {
-            throw new BusinessException(EmBusinessError.USER_ALREAY_EXIST);
+            throw new BusinessException(EmBusinessError.USER_ALREADY_EXIST);
         }
 
         PasswordDO passwordDO = new PasswordDO();
@@ -123,23 +123,23 @@ public class UserServiceImpl implements UserService {
         userInfoCoreDO.setUserEmail(userVO.getEmail()); // 邮箱
         userInfoCoreDO.setUserTel(userVO.getTel()); // 手机号
         userInfoCoreDO.setPasswordId(passwordDO.getId());
-        userInfoCoreDO.setId(stringIdGenerator.generatorId()); // 生成id
+        userInfoCoreDO.setId(stringIdGenerator.generateId()); // 生成id
 
         // 写入数据库
         userInfoCoreMapper.insert(userInfoCoreDO);
 
         // 用户基本信息补充 保持数据一致性
         AreaDO areaDO = new AreaDO();
-        areaDO.setId(stringIdGenerator.generatorId());
+        areaDO.setId(stringIdGenerator.generateId());
         areaMapper.insert(areaDO);
 
         AvatarSizeDO avatarSizeDO = new AvatarSizeDO();
-        avatarSizeDO.setId(stringIdGenerator.generatorId());
+        avatarSizeDO.setId(stringIdGenerator.generateId());
         avatarSizeMapper.insert(avatarSizeDO);
 
         UserInfoDetailDO userInfoDetailDO = new UserInfoDetailDO();
         userInfoDetailDO.setUsername(userInfoCoreDO.getUsername());
-        userInfoDetailDO.setId(stringIdGenerator.generatorId());
+        userInfoDetailDO.setId(stringIdGenerator.generateId());
         userInfoDetailDO.setUserAreaId(areaDO.getId());
         userInfoDetailDO.setUserAvatarId(avatarSizeDO.getId());
         userInfoDetailDO.setUserGender(0);

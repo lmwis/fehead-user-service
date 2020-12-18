@@ -1,6 +1,5 @@
 package com.fehead.open.user.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fehead.lang.controller.BaseController;
 import com.fehead.lang.error.AuthenticationException;
 import com.fehead.lang.error.BusinessException;
@@ -8,7 +7,6 @@ import com.fehead.lang.error.EmBusinessError;
 import com.fehead.lang.response.CommonReturnType;
 import com.fehead.lang.response.FeheadResponse;
 import com.fehead.open.user.controller.vo.UserVO;
-import com.fehead.open.user.dao.UserInfoDetailDO;
 import com.fehead.open.user.domain.UserInfoDetailModel;
 import com.fehead.open.user.security.FeheadSecurityContext;
 import com.fehead.open.user.security.authentication.Authentication;
@@ -21,9 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.io.IOException;
 
 /**

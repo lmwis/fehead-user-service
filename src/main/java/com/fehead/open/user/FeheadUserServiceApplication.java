@@ -1,12 +1,12 @@
 package com.fehead.open.user;
 
-import com.alibaba.nacos.spring.context.annotation.EnableNacos;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,9 +29,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 //@EnableEurekaClient // 启用注册中心
 @EnableFeignClients // 开启feign
 @EnableCircuitBreaker // hystrix
-public class UserServiceApplication {
+@EnableDiscoveryClient //nacos 服务发现
+public class FeheadUserServiceApplication {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserServiceApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(FeheadUserServiceApplication.class);
 
     public static void main(String[] args) {
 
@@ -46,7 +47,7 @@ public class UserServiceApplication {
             }
         });
 
-        SpringApplication.run(UserServiceApplication.class,args);
+        SpringApplication.run(FeheadUserServiceApplication.class,args);
     }
 
     @Bean

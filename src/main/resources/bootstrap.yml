@@ -1,13 +1,32 @@
+
+server:
+  port: 8702
 # 注册中心地址
-nacos:
-  config:
-    server-addr: 39.100.238.97:8848
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://open.fehead.com:8761/eureka
+#      defaultZone: http://localhost:8761/eureka
 spring:
   profiles:
     # 加密配置文件
     active: enc
   application:
     name: fehead-user-service
+  cloud:
+    # nacos 注册中心 & 配置中心
+    nacos:
+      discovery:
+        server-addr: open.fehead.com:8848
+      config:
+        server-addr: open.fehead.com:8848
+    # 配置中心相关配置
+#    config:
+#      discovery:
+#        enabled: true
+#        service-id: FEHEAD-CONFIG-SERVER
+#      profile: test
+    # in bootstrap-enc.yml
 #  datasource:
 #    username:
 #    password:

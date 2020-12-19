@@ -1,6 +1,5 @@
 .idea
 fehead-user-service.iml
 target
-src/main/resources/application-enc.yml
 src/main/resources/bootstrap-enc.yml
-src/main/resources/bootstrap.yml
+src/main/resources/bootstrap-enc.yml

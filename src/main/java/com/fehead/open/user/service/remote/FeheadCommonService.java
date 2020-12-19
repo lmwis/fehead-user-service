@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @Date 2019-11-16 20:11
  * @Version 1.0
  */
-@FeignClient(value = "fehead-common-server", fallback = FeheadCommonServiceFallback.class)
+@FeignClient(value = "fehead-common-service", fallback = FeheadCommonServiceFallback.class)
 public interface FeheadCommonService {
 
     @PostMapping(value = "/sms/send")

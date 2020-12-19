@@ -1,5 +1,6 @@
 package com.fehead.open.user.service.remote.fallback;
 
+import com.fehead.lang.error.EmBusinessError;
 import com.fehead.lang.response.CommonReturnType;
 import com.fehead.lang.response.ErrorMsgType;
 import com.fehead.lang.response.FeheadResponse;
@@ -21,7 +22,9 @@ public class FeheadCommonServiceFallback implements FeheadCommonService {
     @Override
     public FeheadResponse sendSms(String tel, String action) {
         logger.error("短信服务调用异常："+tel);
-        return new RPCommonErrorType(new ErrorMsgType(),"fail");
+        return new RPCommonErrorType(
+                new ErrorMsgType(EmBusinessError.UNKNOWN_ERROR.getErrorCode(),EmBusinessError.UNKNOWN_ERROR.getErrorMsg())
+                ,"fail");
     }
 
     @Override

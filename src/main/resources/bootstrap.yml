@@ -43,13 +43,13 @@ ribbon:
   ConnectTimeout: 6000000
 feign:
   hystrix:
-    #    execution:
-    #      isolation:
-    #        thread:
-    #          timeoutInMilliseconds: 3000
+    execution:
+      isolation:
+        thread:
+          timeoutInMilliseconds: 30000
     enabled: true
   client:
     config:
       defualt:
-        connectTimeout: 20000
-        readTimeout: 200000
+        connectTimeout: 200000
+        readTimeout: 2000000

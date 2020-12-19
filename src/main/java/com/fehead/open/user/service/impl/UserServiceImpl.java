@@ -66,6 +66,12 @@ public class UserServiceImpl implements UserService {
     private final ObjectMapper objectMapper;
 
 
+    /**
+     * 用户注册
+     * @param userVO
+     * @throws BusinessException
+     * @throws IOException
+     */
     @Override
     public void registerUser(UserVO userVO) throws BusinessException, IOException {
 

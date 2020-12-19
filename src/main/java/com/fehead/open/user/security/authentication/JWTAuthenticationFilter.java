@@ -1,7 +1,9 @@
 package com.fehead.open.user.security.authentication;
 
 import com.fehead.lang.error.AuthenticationException;
+import com.fehead.lang.error.BusinessException;
 import com.fehead.lang.error.EmBusinessError;
+import com.fehead.lang.util.JWTUtil;
 import com.fehead.open.user.security.FeheadSecurityContext;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
@@ -10,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -50,6 +53,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
      * token请求头
      */
     public static final String authorizationHeader = "Authorization";
+
+    private final PathMatcher pathMatcher;
 
     /**
      * uri require认证列表
@@ -99,12 +104,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
      * @return
      */
     private boolean isUriRequiredAuthenticated(HttpServletRequest request, String uri) {
-
-
-        if(authenticatedUriList.keySet().contains(uri)){ // 先判断uri是否存在，再核对http method
-            for (HttpMethod httpMethod : authenticatedUriList.get(uri)) {
-                if (HttpMethod.resolve(request.getMethod()) == httpMethod) { // 匹配则需要认证
-                    return true;
+        for (String pattern : authenticatedUriList.keySet()) {
+            if (pathMatcher.match(pattern, uri)) { // 先判断uri是否存在，再核对http method
+                for (HttpMethod httpMethod : authenticatedUriList.get(pattern)) {
+                    if (HttpMethod.resolve(request.getMethod()) == httpMethod) { // 匹配则需要认证
+                        return true;
+                    }
                 }
             }
         }
@@ -122,16 +127,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         if (token != null) {
             try {
                 // parse the token.
-                String user = Jwts.parser()
-                        .setSigningKey(SINGE_KEY)
-                        .parseClaimsJws(token.replace("Bearer ", ""))
-                        .getBody()
-                        .getSubject();
+                String user = JWTUtil.parasToken4Subject(token,SINGE_KEY);
 
                 if (user != null) {
                     return new UserAccessAuthenticationToken(user,"");
                 }
-            } catch (SignatureException e){ // jwt无效
+            } catch (SignatureException | BusinessException e){ // jwt无效
                 return null;
             }
             return null;

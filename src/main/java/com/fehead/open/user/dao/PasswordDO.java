@@ -20,7 +20,7 @@ public class PasswordDO {
      * int 自增id
      */
     @TableId(type= IdType.AUTO)
-    private long id;
+    private int id;
 
     @TableField("password_encode")
     private String passwordEncode;

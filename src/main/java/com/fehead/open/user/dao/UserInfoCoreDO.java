@@ -24,18 +24,33 @@ public class UserInfoCoreDO {
     @TableId
     private String id;
 
+    /**
+     * password
+     */
     @TableField("password_id")
     private long passwordId;
 
+    /**
+     * 用户名 login
+     */
     @TableField("username")
     private String username;
 
+    /**
+     * email login
+     */
     @TableField("user_email")
     private String userEmail;
 
+    /**
+     * tel login
+     */
     @TableField("user_tel")
     private String userTel;
 
+    /**
+     * for show
+     */
     @TableField("nick_name")
     private String nickName;
 

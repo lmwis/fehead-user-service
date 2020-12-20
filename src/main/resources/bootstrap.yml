@@ -38,6 +38,7 @@ fehead:
     authenticate:
       principalParameter: password
 
+# 单位毫秒
 ribbon:
   ReadTimeout: 6000000
   ConnectTimeout: 6000000
@@ -46,10 +47,10 @@ feign:
     execution:
       isolation:
         thread:
-          timeoutInMilliseconds: 30000
+          timeoutInMilliseconds: 6000000
     enabled: true
   client:
     config:
       defualt:
-        connectTimeout: 200000
-        readTimeout: 2000000
+        connectTimeout: 6000000
+        readTimeout: 6000000

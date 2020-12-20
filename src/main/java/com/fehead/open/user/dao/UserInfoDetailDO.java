@@ -24,6 +24,9 @@ public class UserInfoDetailDO {
     @TableId
     private String id;
 
+    /**
+     * username login 和 user_core含义一样，方便查询
+     */
     @TableField("username")
     private String username;
 
@@ -37,13 +40,13 @@ public class UserInfoDetailDO {
      * uuid
      */
     @TableField("user_avatar_id")
-    private String userAvatarId;
+    private int userAvatarId;
 
     /**
      * uuid
      */
     @TableField("user_area_id")
-    private String userAreaId;
+    private int userAreaId;
 
     @TableField(exist = false)
     private UserInfoCoreDO userInfoCoreDO;

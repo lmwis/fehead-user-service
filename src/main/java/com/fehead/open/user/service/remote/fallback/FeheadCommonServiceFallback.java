@@ -29,7 +29,8 @@ public class FeheadCommonServiceFallback implements FeheadCommonService {
 
     @Override
     public CommonReturnType validateSms(String tel, String code) {
-        return null;
+        logger.error("短信校验服务调用异常："+tel);
+        return CommonReturnType.create("?");
     }
 
     @Override

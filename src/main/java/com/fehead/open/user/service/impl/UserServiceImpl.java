@@ -136,11 +136,11 @@ public class UserServiceImpl implements UserService {
 
         // 用户基本信息补充 保持数据一致性
         AreaDO areaDO = new AreaDO();
-        areaDO.setId(stringIdGenerator.generateId());
+//        areaDO.setId(stringIdGenerator.generateId());
         areaMapper.insert(areaDO);
 
         AvatarSizeDO avatarSizeDO = new AvatarSizeDO();
-        avatarSizeDO.setId(stringIdGenerator.generateId());
+//        avatarSizeDO.setId(stringIdGenerator.generateId());
         avatarSizeMapper.insert(avatarSizeDO);
 
         UserInfoDetailDO userInfoDetailDO = new UserInfoDetailDO();
